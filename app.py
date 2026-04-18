@@ -109,10 +109,8 @@ if not st.session_state.access_token:
     st.divider()
     st.subheader("Login to get started")
     st.write("Click below to log in with your LinkedIn account. You will be redirected back here after approving access.")
-
     auth_url = get_linkedin_auth_url()
     st.link_button("🔗 Login with LinkedIn", auth_url, use_container_width=True)
-
     st.caption("Your LinkedIn credentials are never stored. Only a temporary session token is used.")
     st.stop()
 
