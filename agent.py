@@ -1,8 +1,8 @@
 import requests
-import streamlit as st
 
 
 def generate_caption(topic: str, tone: str) -> str:
+    import streamlit as st
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {st.secrets['GROQ_API_KEY']}",
@@ -35,15 +35,15 @@ Return ONLY the post text. No extra explanation."""
     return response.json()["choices"][0]["message"]["content"].strip()
 
 
-def post_to_linkedin(post_text: str) -> dict:
+def post_to_linkedin(post_text: str, access_token: str, person_urn: str) -> dict:
     url = "https://api.linkedin.com/v2/ugcPosts"
     headers = {
-        "Authorization": f"Bearer {st.secrets['LINKEDIN_ACCESS_TOKEN']}",
+        "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
         "X-Restli-Protocol-Version": "2.0.0"
     }
     payload = {
-        "author": st.secrets["LINKEDIN_PERSON_URN"],
+        "author": person_urn,
         "lifecycleState": "PUBLISHED",
         "specificContent": {
             "com.linkedin.ugc.ShareContent": {
@@ -98,14 +98,13 @@ def upload_image_to_linkedin(access_token: str, person_urn: str, image_bytes: by
     return image_urn
 
 
-def post_to_linkedin_with_image(post_text: str, image_urns: list) -> dict:
+def post_to_linkedin_with_image(post_text: str, image_urns: list, access_token: str, person_urn: str) -> dict:
     url = "https://api.linkedin.com/v2/ugcPosts"
     headers = {
-        "Authorization": f"Bearer {st.secrets['LINKEDIN_ACCESS_TOKEN']}",
+        "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
         "X-Restli-Protocol-Version": "2.0.0"
     }
-
     media_list = [
         {
             "status": "READY",
@@ -115,9 +114,8 @@ def post_to_linkedin_with_image(post_text: str, image_urns: list) -> dict:
         }
         for i, urn in enumerate(image_urns)
     ]
-
     payload = {
-        "author": st.secrets["LINKEDIN_PERSON_URN"],
+        "author": person_urn,
         "lifecycleState": "PUBLISHED",
         "specificContent": {
             "com.linkedin.ugc.ShareContent": {
